@@ -44,9 +44,6 @@
     font-weight: 700;
 }
 
-.dates {
-}
-
 .row {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -61,6 +58,7 @@
     color: white;   
 }
 
-.next-days, .previous-days {
-    /* visibility: hidden; */
+
+.days {
+    cursor: pointer;
 }

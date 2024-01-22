@@ -52,9 +52,9 @@ document.querySelector(".prev").addEventListener("click", () => {
 });
 
 document.querySelector(".next").addEventListener("click", () => {
-    reloading();
     date.setMonth(date.getMonth() + 1);
     renderCalendar();
+    reloading();
 });
 
 renderCalendar();
@@ -65,26 +65,27 @@ const userFill = document.getElementById('user-selected-date');
 const localStore = JSON.parse(localStorage.getItem('selectedDates')) || [];
 const day = document.getElementsByClassName('days')[0];
 let dateArray = localStore;
-userFill.innerHTML = localStore
+userFill.innerHTML = "[ "+localStore+" ]"
 day.addEventListener('click', (e)=> {
     let monthValue = months[date.getMonth()];
     let dateValue = new Date().toDateString();
-    if (e.target.style.backgroundColor==="blue") {
-        e.target.style.backgroundColor="white";
-        e.target.style.color="black";
-        // e.target.textContent=
-        // console.log( e.target)
-    } else {
-        let splitted = dateValue.split(" ");
-        let merged = `${e.target.textContent}-${months.indexOf(monthValue)+1}-${splitted[3]}`
-        if (!dateArray.includes(merged)) {
-            dateArray.push(merged)
-        }
-        localStorage.setItem('selectedDates',JSON.stringify(dateArray));
+
+    let splitted = dateValue.split(" ");
+    let merged = `${e.target.textContent}-${months.indexOf(monthValue)+1}-${splitted[3]}`
+
+    if (!dateArray.includes(merged) && e.target.textContent !== "") {
+        dateArray.push(merged)
         e.target.style.backgroundColor="blue"
         e.target.style.color="white";
-        userFill.innerHTML = localStore
+    } else if ((dateArray.includes(merged) && e.target.textContent !== "")) {
+        dateArray = dateArray.filter((item)=>item!==merged);
+        e.target.style.backgroundColor="white";
+        e.target.style.color="black";
     }
+    
+    
+    localStorage.setItem('selectedDates',JSON.stringify(dateArray));
+    userFill.innerHTML = "[ "+dateArray+" ]";
 })
 
 const months = [
@@ -102,26 +103,22 @@ const months = [
     "December",
 ];
 
-
+reloading()
 function reloading() {
+    const daysSelector = document.querySelectorAll('.days-border');
     const localStore = JSON.parse(localStorage.getItem('selectedDates')) || [];
     let monthValue = months[date.getMonth()];
     let dateValue = new Date().toDateString();
-    console.log(localStore)
     for (let i of localStore) {
         let temp = i.split("-");
-        console.log(temp);
-        console.log(dateValue)
-        console.log(monthValue)
         let dateSplit = dateValue.split(" ");
         if (months[temp[1]-1] === monthValue && temp[2] === dateSplit[3]) {
-            // dateSplit[2]
-            // day.forEach(i, ()=> {
-            //     if (i === `<div class="days-border">${dateSplit[2]}</div>`) {
-            //         console.log("yes")
-            //     }
-
-            // })
+            daysSelector.forEach((item)=> {
+                if(item.textContent === temp[0]) {
+                    item.style.backgroundColor = "blue";
+                    item.style.color = "white";
+                }
+            })
         }
     }
 }
