@@ -1,14 +1,14 @@
 const date = new Date();
-
-const renderCalendar = () => {
+const userFill = document.getElementById('user-selected-date');
+const monthDays = document.querySelector(".days");
+const renderCalendar = () => {   
     date.setDate(1);
-    const monthDays = document.querySelector(".days");
-
     const lastDay = new Date(
         date.getFullYear(),
         date.getMonth() + 1,
         0
     ).getDate();
+  
 
     const firstDayIndex = date.getDay();
 
@@ -24,23 +24,25 @@ const renderCalendar = () => {
 
     let days = "";
 
-    for (let x = firstDayIndex; x > 0; x--) {
-        days += `<div class="days-border previous-days"></div>`;
+    for (let x = 0; x< firstDayIndex; x++) {
+        days += `<div class="days-border "></div>`;
     }
 
     for (let i = 1; i <= lastDay; i++) {
+        let merged = `${i}-${date.getMonth()+1}-${date.getFullYear()}`
         if (
             i === new Date().getDate() &&
             date.getMonth() === new Date().getMonth()
         ) {
-            days += `<div class="days-border today">${i}</div>`;
+            
+            days += `<div class="days-border today" id=${merged}>${i}</div>`;
         } else {
-            days += `<div class="days-border">${i}</div>`;
+            days += `<div class="days-border" id=${merged}>${i}</div>`;
         }
     }
 
     for (let j = 1; j <= nextDays; j++) {
-        days += `<div class="days-border next-days"></div>`;
+        days += `<div class="days-border"></div>`;
         monthDays.innerHTML = days;
     }
 };
@@ -59,7 +61,6 @@ document.querySelector(".next").addEventListener("click", () => {
 
 renderCalendar();
 
-const userFill = document.getElementById('user-selected-date');
 
 
 const localStore = JSON.parse(localStorage.getItem('selectedDates')) || [];
@@ -67,11 +68,9 @@ const day = document.getElementsByClassName('days')[0];
 let dateArray = localStore;
 userFill.innerHTML = "[ "+localStore+" ]"
 day.addEventListener('click', (e)=> {
-    let monthValue = months[date.getMonth()];
-    let dateValue = new Date().toDateString();
 
-    let splitted = dateValue.split(" ");
-    let merged = `${e.target.textContent}-${months.indexOf(monthValue)+1}-${splitted[3]}`
+    console.log("id",e.target.id);
+    let merged = e.target.id;
 
     if (!dateArray.includes(merged) && e.target.textContent !== "") {
         dateArray.push(merged)
@@ -82,43 +81,23 @@ day.addEventListener('click', (e)=> {
         e.target.style.backgroundColor="white";
         e.target.style.color="black";
     }
-    
-    
+      
     localStorage.setItem('selectedDates',JSON.stringify(dateArray));
     userFill.innerHTML = "[ "+dateArray+" ]";
 })
-
-const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-];
 
 reloading()
 function reloading() {
     const daysSelector = document.querySelectorAll('.days-border');
     const localStore = JSON.parse(localStorage.getItem('selectedDates')) || [];
-    let monthValue = months[date.getMonth()];
-    let dateValue = new Date().toDateString();
-    for (let i of localStore) {
-        let temp = i.split("-");
-        let dateSplit = dateValue.split(" ");
-        if (months[temp[1]-1] === monthValue && temp[2] === dateSplit[3]) {
-            daysSelector.forEach((item)=> {
-                if(item.textContent === temp[0]) {
-                    item.style.backgroundColor = "blue";
-                    item.style.color = "white";
-                }
-            })
-        }
+
+    for (let i of localStore) {    
+        daysSelector.forEach((item)=> {
+            if(item.id === i) {
+                item.style.backgroundColor = "blue";
+                item.style.color = "white";
+            }
+        })
+        
     }
 }
